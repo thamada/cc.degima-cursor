@@ -19,8 +19,9 @@
 1. SSH コマンドを取得（引数またはプロンプト）
 2. `user` / `host` / `port` を解析
 3. 秘密鍵パスを解決（既定は接続可能な鍵を自動選択）
-4. `~/.ssh/config` に Device 別 Host ブロックを upsert
-5. Cursor を Remote-SSH で `/root` へ detached 起動
+4. 解析・解決結果をターミナルへ枠付き表示（§2-4）
+5. `~/.ssh/config` に Device 別 Host ブロックを upsert
+6. Cursor を Remote-SSH で `/root` へ detached 起動
 
 ## 2. 入力
 
@@ -32,7 +33,7 @@
 | `--ssh-key PATH` | 使用する秘密鍵を明示（後述の環境変数より優先） |
 | `-h` / `--help` | 用法を表示して終了コード `2` |
 
-成功時は標準出力に接続先と採用した鍵パスを表示する。失敗時は `error: ...` を標準エラーへ出して終了コード `1`。
+成功時は起動前サマリ（§2-4）のあと、接続先と採用した鍵パスを標準出力へ表示する。失敗時は `error: ...` を標準エラーへ出して終了コード `1`。
 
 ### 2-2. SSH コマンド
 
@@ -67,7 +68,24 @@ ssh root@dk11-kusaka24.degima.ai -p 10008
 | Linux | `~/.config/degima-agent/ssh-keys/degima_dashboard_ed25519` |
 | Windows | `%APPDATA%\degima-agent\ssh-keys\degima_dashboard_ed25519` |
 
-いずれも無い／拒否の場合はエラー終了。成功時は採用した鍵パスを標準出力へ表示する。
+いずれも無い／拒否の場合はエラー終了。
+
+### 2-4. 起動前サマリ表示
+
+鍵解決直後・Cursor 起動前に、`print_parse_summary` が次を枠付きで標準出力へ出す。
+
+| ラベル | 内容 |
+| --- | --- |
+| `user` / `host` / `port` | 解析した SSH 先 |
+| `key` | 採用した秘密鍵パス |
+| `alias` | `degima-{host}-{port}`（SSH config の Host） |
+| `path` | リモートワークスペース（`/root`） |
+
+色付けは ANSI（外部依存なし）。次の場合は無色テキストのみ。
+
+- 環境変数 `NO_COLOR` が設定されている
+- `TERM=dumb`
+- 標準出力が TTY でない
 
 ## 3. SSH config
 
@@ -106,11 +124,12 @@ Host degima-dk11-kusaka24.degima.ai-10008
 | ファイル | 役割 |
 | --- | --- |
 | `degima_cursor/__init__.py` | パッケージ版 `__version__` |
-| `degima_cursor/__main__.py` | 引数／対話入力、鍵解決、オーケストレーション |
+| `degima_cursor/__main__.py` | 引数／対話入力、鍵解決、サマリ表示、オーケストレーション |
 | `degima_cursor/ssh_cmd.py` | `SshTarget` / `parse_ssh_cmd` |
 | `degima_cursor/ssh_config.py` | `ensure_device_ssh_config` / Host エイリアス・マーカー upsert |
 | `degima_cursor/ssh_key.py` | `resolve_identity_path`（BatchMode 試行） |
 | `degima_cursor/cursor.py` | Cursor 探索・Remote-SSH 起動 |
+| `degima_cursor/ui.py` | `print_parse_summary`（ANSI 枠付きサマリ。`NO_COLOR` / 非 TTY / `TERM=dumb` で無色） |
 
 ## 6. 実行環境
 

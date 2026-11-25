@@ -4,6 +4,14 @@
 >   本ドキュメントは変更履歴です。日付はdateコマンドで確認して2026-01-23 12:34:55のように年-月-日 時:分:秒のようにします。
 >   最も最新のものから順に並べて記入します。
 
+## 2026-11-26 00:31:19
+
+- ソースと `doc/design.md` の差分を反映した（起動前サマリ表示の処理フロー、表示項目、色無効条件 `NO_COLOR` / 非 TTY / `TERM=dumb`、モジュール `ui.py`）。
+
+## 2026-11-26 00:27:44
+
+- Cursor 起動前に SSH 解析結果（user / host / port / key / alias / path）を ANSI カラーの枠付きで表示するようにした（`degima_cursor/ui.py`）。`NO_COLOR`・`TERM=dumb`・非 TTY では無色。
+
 ## 2026-11-26 00:15:09
 
 - ソースと `doc/design.md` の差分を反映した（Python 3 パッケージ構成、CLI 用法、秘密鍵の OS 別 Dashboard パス、BatchMode 試行条件、SSH config の chmod／ホーム解決、Cursor 探索パスと detached 起動、Makefile ターゲット）。

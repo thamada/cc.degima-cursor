@@ -7,8 +7,9 @@ from pathlib import Path
 
 from .cursor import launch_cursor_with_remote_folder, remote_workspace_path
 from .ssh_cmd import parse_ssh_cmd
-from .ssh_config import ensure_device_ssh_config
+from .ssh_config import device_ssh_host_alias, ensure_device_ssh_config
 from .ssh_key import resolve_identity_path
+from .ui import print_parse_summary
 
 
 def usage() -> None:
@@ -83,6 +84,13 @@ def main(argv: list[str] | None = None) -> int:
         ssh_cmd = ssh_cmd_arg if ssh_cmd_arg is not None else read_ssh_command_interactive()
         target = parse_ssh_cmd(ssh_cmd)
         identity_path = resolve_identity_path(target, ssh_key_arg)
+        ssh_host = device_ssh_host_alias(target.host, target.port)
+        print_parse_summary(
+            target,
+            identity_path=identity_path,
+            ssh_host=ssh_host,
+            remote_path=remote_workspace_path(),
+        )
         message = open_in_cursor(ssh_cmd, identity_path)
     except (ValueError, OSError, RuntimeError) as error:
         print(f"error: {error}", file=sys.stderr)
