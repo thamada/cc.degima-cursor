@@ -139,6 +139,7 @@ Host degima-dk11-kusaka24.degima.ai-10008
 
 | ターゲット | 動作 |
 | --- | --- |
-| `run`（既定） | `python3 -m degima_cursor` |
+| `help` | Make ターゲット一覧・Examples を表示し、続けて `python3 -m degima_cursor --help` で CLI 用法も出す |
+| `run`（既定） | `python3 -m degima_cursor`（引数なし＝対話入力） |
 | `check` | `python3 -m compileall` で `degima_cursor/` の構文チェック |
 | `clean` | `__pycache__` / `.local` / `target` 削除 |
